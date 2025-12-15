@@ -38,6 +38,10 @@ export class WalletService {
         throw new NotFoundException('Wallet not found');
       }
 
+      if (amount <= 0) {
+        throw new BadRequestException('Amount must be greater than zero');
+      }
+
       const tx = manager.create(Transaction, {
         type: TransactionType.FUND,
         amount,
@@ -63,6 +67,16 @@ export class WalletService {
   ) {
     if (fromId === toId) {
       throw new BadRequestException('Cannot transfer to same wallet');
+    }
+
+    if (amount === 0) {
+      throw new BadRequestException(
+        'Transfer amount must be greater than zero',
+      );
+    }
+
+    if (amount < 0) {
+      throw new BadRequestException('Transfer amount must be positive');
     }
 
     return this.walletRepo.manager.transaction(async (manager) => {
@@ -124,14 +138,8 @@ export class WalletService {
     return wallet;
   }
 
-  async getAll() {
-    const wallet = await this.walletRepo.find();
-
-    if (!wallet) {
-      throw new NotFoundException('Wallet not found');
-    }
-
-    return wallet;
+  async getAll(skip = 0, take = 20) {
+    return this.walletRepo.find({ skip, take });
   }
 
   private async assertIdempotency(manager: EntityManager, key?: string) {

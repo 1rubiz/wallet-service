@@ -19,7 +19,6 @@ export class Transaction {
   @Column({ type: 'float' })
   amount: number;
 
-  // positive or negative entry
   @Column({ type: 'float' })
   delta: number;
 
