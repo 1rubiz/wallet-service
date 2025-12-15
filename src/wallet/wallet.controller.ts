@@ -32,7 +32,7 @@ export class WalletController {
     return this.walletService.getWallet(id);
   }
 
-  @Get('all')
+  @Get()
   all() {
     return this.walletService.getAll();
   }
