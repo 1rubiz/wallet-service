@@ -51,7 +51,7 @@ https://wallet-service-dxdp.onrender.com
 ### 1️⃣ Clone the repository
 
 ```bash
-git clone https://github.com/<your-username>/wallet-service.git
+git clone https://github.com/1rubiz/wallet-service.git
 cd wallet-service
 ```
 
