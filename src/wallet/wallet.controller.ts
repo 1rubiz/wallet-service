@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Param, Get } from '@nestjs/common';
+import { Controller, Post, Body, Param, Get, Headers } from '@nestjs/common';
 import { CreateWalletDto } from './dto/create-wallet.dto';
 import { FundWalletDto } from './dto/fund-wallet.dto';
 import { TransferDto } from './dto/transfer.dto';
@@ -14,16 +14,25 @@ export class WalletController {
   }
 
   @Post(':id/fund')
-  fund(@Param('id') id: string, @Body() dto: FundWalletDto) {
-    return this.walletService.fundWallet(id, dto.amount);
+  @Post(':id/fund')
+  fundWallet(
+    @Param('id') id: string,
+    @Body() dto: FundWalletDto,
+    @Headers('idempotency-key') idempotencyKey?: string,
+  ) {
+    return this.walletService.fundWallet(id, dto.amount, idempotencyKey);
   }
 
   @Post('transfer')
-  transfer(@Body() dto: TransferDto) {
+  transfer(
+    @Body() dto: TransferDto,
+    @Headers('idempotency-key') idempotencyKey?: string,
+  ) {
     return this.walletService.transfer(
       dto.fromWalletId,
       dto.toWalletId,
       dto.amount,
+      idempotencyKey,
     );
   }
 

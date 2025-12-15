@@ -28,7 +28,9 @@ export class WalletService {
 
   async fundWallet(walletId: string, amount: number, idempotencyKey?: string) {
     return this.walletRepo.manager.transaction(async (manager) => {
-      await this.assertIdempotency(manager, idempotencyKey);
+      if (idempotencyKey) {
+        await this.assertIdempotency(manager, idempotencyKey);
+      }
 
       const wallet = await manager.findOne(Wallet, {
         where: { id: walletId },
@@ -83,8 +85,10 @@ export class WalletService {
       const debitKey = idempotencyKey ? `${idempotencyKey}_debit` : undefined;
       const creditKey = idempotencyKey ? `${idempotencyKey}_credit` : undefined;
 
-      await this.assertIdempotency(manager, debitKey);
-      await this.assertIdempotency(manager, creditKey);
+      if (idempotencyKey) {
+        await this.assertIdempotency(manager, debitKey);
+        await this.assertIdempotency(manager, creditKey);
+      }
 
       const from = await manager.findOne(Wallet, { where: { id: fromId } });
       const to = await manager.findOne(Wallet, { where: { id: toId } });
